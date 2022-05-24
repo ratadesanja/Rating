@@ -454,10 +454,12 @@ int FindLowestTarget()
 					break;
 				}
 			}
+
 		}
 	}
 	return lowestIndex;
 }
+
 
 
 float GAME_TIME = 0;
