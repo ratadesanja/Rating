@@ -420,7 +420,7 @@ int FindLowestTarget()
 {
 	int lowestIndex = -1;
 	float localPlayerX = CHAMPION_LIST[0].Pos.x, localPlayerZ = CHAMPION_LIST[0].Pos.z;
-	int localPlayerRange = CHAMPION_LIST[0].AtkRange - 50;
+	int localPlayerRange = (CHAMPION_LIST[0].AtkRange / 100) * 90;
 
 	float lowestHealth = 16000;
 	int lowestArmor = 10000;
@@ -441,20 +441,17 @@ int FindLowestTarget()
 			if (distance < localPlayerRange)
 			{
 				float targetHealth = CHAMPION_LIST[index].Health;
-				if (targetHealth > 1)
+				int targetArmor = CHAMPION_LIST[index].Armor + CHAMPION_LIST[index].BonusArmor;
+				if (targetHealth < lowestHealth && targetArmor < lowestArmor && targetHealth > 0)
 				{
-					int targetArmor = CHAMPION_LIST[index].Armor + CHAMPION_LIST[index].BonusArmor;
-					if (targetHealth < lowestHealth && targetArmor < lowestArmor && targetHealth > 0)
-					{
-						lowestHealth = targetHealth;
+					lowestHealth = targetHealth;
 
-						lowestIndex = index;
-					}
-					if (targetHealth < (CHAMPION_LIST[0].BaseAtk + CHAMPION_LIST[0].BonusAtk))
-					{
-						lowestIndex = index;
-						break;
-					}
+					lowestIndex = index;
+				}
+				if (targetHealth < (CHAMPION_LIST[0].BaseAtk + CHAMPION_LIST[0].BonusAtk) * 2)
+				{
+					lowestIndex = index;
+					break;
 				}
 			}
 		}

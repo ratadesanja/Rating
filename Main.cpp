@@ -44,7 +44,7 @@ int main()
         GetChampionNamesFromFile();
 
 
-        while (FindGameTime() < 30)
+        while (FindGameTime() < 20)
         {
             Sleep(1000);
         }

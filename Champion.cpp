@@ -95,7 +95,9 @@ vector<BUFF> ReadBuffs(UINT championAddress)
 void Champion::UpdateStats()
 {
 	Visibility = Read(ADDRESS, oObjVisibility, Visibility);
-	if (Visibility)
+	SpawnCount = Read(ADDRESS, oObjSpawnCount, Invulnerable);
+	IsAlive = SpawnCount % 2 == 0 ? true : false;
+	if (Visibility && IsAlive)
 	{
 		Name = ReadString(ADDRESS, oObjName, Name);
 
@@ -134,7 +136,6 @@ void Champion::UpdateStats()
 
 		Targetable = Read(ADDRESS, oObjTargetable, Targetable);
 		Invulnerable = Read(ADDRESS, oObjInvulnerable, Invulnerable);
-		SpawnCount = 0;
 
 		Index = Read(ADDRESS, oObjIndex, Index);
 		Team = Read(ADDRESS, oObjTeam, Team);
@@ -191,8 +192,6 @@ void Champion::UpdateStats()
 		AtkSpeed = UncappedAS ? AtkSpeed : (AtkSpeed > 2.5) ? 2.5 : AtkSpeed;
 		
 	}
-
-	IsAlive = SpawnCount % 2 == 0 ? true : false;
 }
 
 int count_digit(int number) {
