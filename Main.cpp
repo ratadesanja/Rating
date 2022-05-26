@@ -55,7 +55,7 @@ int main()
         std::thread updater(UpdateInfo);
         Sleep(1000);
 
-        string sound = "S:\\Guitar\\Split\\Downloads\\sound2.wav";
+        //string sound = "S:\\Guitar\\Split\\Downloads\\sound2.wav";
 
         int startX = 32;
         console.SetCursorPosition(startX + 2, 1);
@@ -94,7 +94,7 @@ int main()
                 if (!targetChampionsOnly)
                 {
                     targetChampionsOnly = TargetChampionsOnly(targetChampionsOnly, true);
-                    PlaySound(sound.c_str(), NULL, SND_FILENAME | SND_ASYNC);
+                    //PlaySound(sound.c_str(), NULL, SND_FILENAME | SND_ASYNC);
                 }
 
                 /*
@@ -114,7 +114,7 @@ int main()
             }
             else if (!GetAsyncKeyState(VK_SPACE))
             {
-                PlaySound(NULL, NULL, SND_ASYNC);
+                //PlaySound(NULL, NULL, SND_ASYNC);
                 console.Clear(0, 3, 16);
                 cout << "OFF";
                 if (targetChampionsOnly)

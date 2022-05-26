@@ -131,6 +131,6 @@ template<typename T>
 T Read(UINT, int, T);
 string ReadString(UINT, int, string);
 
-extern vector<Champion> CHAMPION_LIST;
+extern vector<Champion*> CHAMPION_LIST;
 extern vector<int> ALLY_INDEXES;
 extern vector<int> ENEMY_INDEXES;

@@ -194,8 +194,6 @@ void FindChampionPointers(vector<Champion>& ChampionList, vector<UINT>& addressS
 		float newChampionHealth = 0.0f;
 		try
 		{
-
-
 			newChampionName = ReadString(pointer, oObjName, newChampionName);
 			if (IsChampionName(newChampionName))
 			{
@@ -221,13 +219,10 @@ void FindChampionPointers(vector<Champion>& ChampionList, vector<UINT>& addressS
 void GetTeamChampions()
 {
 	vector<UINT> addressSeen;
-	string localPlayerName = CHAMPION_LIST[CHAMPION_LIST.size() - 1].Name;
-	addressSeen.push_back(CHAMPION_LIST[CHAMPION_LIST.size() - 1].ADDRESS);
+	string localPlayerName = CHAMPION_LIST[0].Name;
+	addressSeen.push_back(CHAMPION_LIST[0].ADDRESS);
 
 	FindChampionPointers(CHAMPION_LIST, addressSeen);
-
-	
-
 
 	int team = CHAMPION_LIST[0].Team;
 

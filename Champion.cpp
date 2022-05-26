@@ -94,12 +94,14 @@ vector<BUFF> ReadBuffs(UINT championAddress)
 
 void Champion::UpdateStats()
 {
+	Name = ReadString(ADDRESS, oObjName, Name);
+	Team = Read(ADDRESS, oObjTeam, Team);
+
 	Visibility = Read(ADDRESS, oObjVisibility, Visibility);
 	SpawnCount = Read(ADDRESS, oObjSpawnCount, Invulnerable);
 	IsAlive = SpawnCount % 2 == 0 ? true : false;
 	if (Visibility && IsAlive)
 	{
-		Name = ReadString(ADDRESS, oObjName, Name);
 
 		Pos = Read(ADDRESS, oObjPos, Pos);
 		Lvl = Read(ADDRESS, oObjLvl, Lvl);
@@ -138,7 +140,6 @@ void Champion::UpdateStats()
 		Invulnerable = Read(ADDRESS, oObjInvulnerable, Invulnerable);
 
 		Index = Read(ADDRESS, oObjIndex, Index);
-		Team = Read(ADDRESS, oObjTeam, Team);
 		NetworkID = Read(ADDRESS, oObjNetworkID, NetworkID);
 
 		Expiry = 0;
@@ -153,6 +154,7 @@ void Champion::UpdateStats()
 		buffs = ReadBuffs(ADDRESS);
 
 		int HoB = 0;
+		int reduction = 0;
 		UncappedAS = false;
 		for (int i = 0; i < buffs.size(); i++)
 		{
@@ -186,10 +188,21 @@ void Champion::UpdateStats()
 						UncappedAS = true;
 					}
 				}
+				if (buffs[i].name == "JinxQ")
+				{
+					if (buffs[i].end_time > GAME_TIME)
+					{
+						reduction = 10;
+					}
+				}
 			}
 		}
 		AtkSpeed = BaseAtkSpeed * (AtkSpeedMulti + HoB);
 		AtkSpeed = UncappedAS ? AtkSpeed : (AtkSpeed > 2.5) ? 2.5 : AtkSpeed;
+		if (reduction != 0)
+		{
+			AtkSpeed = (AtkSpeed / 100) * (100 - reduction);
+		}
 		
 	}
 }
@@ -241,26 +254,24 @@ void Champion::ShowStats(Console& console)
 		cout << CHAMPION_LIST[index].Visibility << " ";
 
 	}
-	
+	*/
 	//Show buffs
-	
+	/*
 	int j = 0;
 	for (int i = 0; i < buffs.size(); i++)
 	{
-		if (buffs[i].name[0] == 'A')
-		{
-			int startY = 11;
+		int startY = 11;
 
-			int nameX = buffs[i].name.length();
-			int countX = count_digit((int)buffs[i].count); eX += 10 - eX;
-			int endX = count_digit((int)buffs[i].end_time); eX += 10 - eX;
+		int nameX = buffs[i].name.length();
+		int countX = count_digit((int)buffs[i].count); eX += 10 - eX;
+		int endX = count_digit((int)buffs[i].end_time); eX += 10 - eX;
 
-			console.Clear(32, nameX + countX + endX + 3, startY + j + 1);
-			cout << buffs[i].name << " " << buffs[i].count << " " << buffs[i].end_time;
-			j++;
-		}
+		console.Clear(32, nameX + countX + endX + 3, startY + j + 1);
+		cout << buffs[i].name << " " << buffs[i].count << " " << buffs[i].end_time;
+		j++;
 	}
 	*/
+	
 	
 
 }
