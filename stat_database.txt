@@ -144,7 +144,7 @@ viktor 0.658
 vladimir 0.658
 volibear 0.700
 warwick 0.638
-wukong 0.658
+monkeyking 0.658
 xayah 0.625
 xerath 0.625
 xin 0.645
@@ -159,4 +159,4 @@ ziggs 0.656
 zilean 0.625
 zoe 0.625
 zyra 0.625
-practicetool_targetdummy 0.000
+target 0.000

@@ -1,9 +1,12 @@
 #pragma once
 #include <Windows.h>
 
-void GetTeamChampions();
-int* World2Screen(float, float, float);
+extern int SCREEN_WIDTH;
+extern int SCREEN_HEIGHT;
 
+COORDS World2Screen(float, float, float);
+
+void GetTeamChampions();
 int FindClosestTarget();
 int FindLowestTarget();
 

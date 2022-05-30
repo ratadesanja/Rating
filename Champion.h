@@ -76,7 +76,7 @@ class Champion
 		float MagicRes;
 		float BonusMagicRes;
 
-		int MoveSpeed;
+		float MoveSpeed;
 
 		float BaseAtk;
 		float BonusAtk;
@@ -125,12 +125,12 @@ class Champion
 		Champion(DWORD, DWORD);
 };
 void GetChampionNamesFromFile();
-vector<Champion> GetChampionlist();
+//vector<Champion> GetChampionlist();
 
 template<typename T> 
 T Read(UINT, int, T);
-string ReadString(UINT, int, string);
+string ReadString(UINT, int, string, UINT);
 
-extern vector<Champion*> CHAMPION_LIST;
+extern vector<Champion> CHAMPION_LIST;
 extern vector<int> ALLY_INDEXES;
 extern vector<int> ENEMY_INDEXES;

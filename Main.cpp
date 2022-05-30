@@ -12,6 +12,8 @@
 #include "World.h"
 #include "Orbwalker.h"
 
+#include "Over.h"
+
 #pragma comment (lib, "winmm.lib")
 
 using std::cout; using std::endl; using std::string; using std::vector;
@@ -21,14 +23,68 @@ void UpdateInfo()
     using namespace std::literals::chrono_literals;
 
     cout << "Starting thread";
-    while (GetGameState())
+    float lastTime = FindGameTime();
+    std::this_thread::sleep_for(20ms);
+
+    OVER::Setup();
+    bool overl = true;
+
+    COORDS POS; COORDS SCREENPOS;
+
+    while (GAME_STATE)
     {
-        FindGameTime();
+        if (lastTime == FindGameTime())
+        {
+            GAME_STATE = false;
+        }
         for (int i = 0; i < CHAMPION_LIST.size(); i++)
         {
             CHAMPION_LIST[i].UpdateStats();
         }
-        std::this_thread::sleep_for(20ms);
+        lastTime = GAME_TIME;
+
+        if (overl)
+        {
+
+            if (!OVER::ProcessMessages())
+            {
+                overl = false;
+            }
+            OVER::TextArguments.clear();
+            int allyTeam = CHAMPION_LIST[0].Team;
+            for(int i = 0; i < CHAMPION_LIST.size(); i++)
+            {
+                POS = CHAMPION_LIST[i].Pos;
+                SCREENPOS = World2Screen(POS.x, POS.y, POS.z);
+                if (SCREENPOS.x < 1920 && SCREENPOS.x > 0 && SCREENPOS.y < 1080 && SCREENPOS.y > 0)
+                {
+                    int r, g, b;
+                    if (CHAMPION_LIST[i].Team == allyTeam)
+                    {
+                        r = 3;
+                        g = 252;
+                        b = 186;
+                    }
+                    else
+                    {
+                        r = 239;
+                        g = 111;
+                        b = 108;
+                    }
+                    OVER::TextArg arg = { CHAMPION_LIST[i].Name, SCREENPOS.x, SCREENPOS.y, 255, r, g, b };
+                    OVER::TextArguments.push_back(arg);
+                }
+            }
+
+            if(OVER::TextArguments.size() == 0)
+            {
+                OVER::TextArg arg = { "ERROR", 100, 100, 255, 255, 0, 0 };
+                OVER::TextArguments.push_back(arg);
+            }
+            
+        }
+
+        std::this_thread::sleep_for(25ms);
     }
 
 }
@@ -48,6 +104,9 @@ int main()
         {
             Sleep(1000);
         }
+        GAME_STATE = true;
+
+
         Champion LocalPlayer(oLocalPlayer, 0);
         GetTeamChampions();
         cout << "Starting game" << endl;

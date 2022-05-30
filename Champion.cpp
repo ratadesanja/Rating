@@ -24,13 +24,14 @@ T Read(UINT ADDRESS, int offset, T variable)
 	return var;
 }
 
-string ReadString(UINT ADDRESS, int offset, string variable)
+string ReadString(UINT ADDRESS, int offset, string variable, UINT PTROFFSET = 0x0)
 {
 	string var = "";
 	UINT StringPTR = 0;
-	StringPTR = Read(ADDRESS, offset, StringPTR);
+	StringPTR = Read(ADDRESS, offset, StringPTR) + PTROFFSET;
 	char buf[255];
 	ReadProcessMemory(LeaguePHandle, (LPVOID)StringPTR, &buf, sizeof(buf), nullptr);
+	/*
 	for (int i = 0; i < 100; i++)
 	{
 		if (buf[i] == NULL)
@@ -38,6 +39,8 @@ string ReadString(UINT ADDRESS, int offset, string variable)
 
 		var.push_back(buf[i]);
 	}
+	*/
+	var = buf;
 	return var;
 }
 
@@ -58,7 +61,10 @@ BUFF ReadBuff(UINT address)
 		return { "", 0, 0};
 
 
-	name = ReadString(address, oBuffName, name); name = name.erase(0, 4);
+	//UINT namePtr = 0;
+	//namePtr = Read(address, oBuffName, namePtr);
+
+	name = ReadString(address, oBuffName, name, 0x4); //name = name.erase(0, 4);
 	count = Read(address, oBuffEntryBuffCount, count);
 	endTime = Read(address, oBuffEntryBuffEndTime, endTime);
 	type = Read(address, oBuffType, type);
@@ -85,7 +91,7 @@ vector<BUFF> ReadBuffs(UINT championAddress)
 	{
 		buffPointer = Read(currentAddress, 0, buffPointer);
 		BUFF buff = ReadBuff(buffPointer);
-			if(buff.end_time != 0)
+		if(buff.end_time != 0)
 			buffs.push_back(buff);
 		currentAddress += 0x8;
 	}
@@ -94,11 +100,43 @@ vector<BUFF> ReadBuffs(UINT championAddress)
 
 void Champion::UpdateStats()
 {
-	Name = ReadString(ADDRESS, oObjName, Name);
+	Name = ReadString(ADDRESS, oObjName, Name, 0x0);
 	Team = Read(ADDRESS, oObjTeam, Team);
 
 	Visibility = Read(ADDRESS, oObjVisibility, Visibility);
 	SpawnCount = Read(ADDRESS, oObjSpawnCount, Invulnerable);
+	/*
+	if(Name == "Karthus")
+	{
+		buffs = ReadBuffs(ADDRESS);
+		for (int i = 0; i < buffs.size(); i++)
+		{
+			if (buffs[i].name == "KarthusDeathDefied")
+			{
+				if (buffs[i].end_time > GAME_TIME + 25000)
+				{
+					IsAlive = false;
+				}
+				else
+				{
+					Health = Read(ADDRESS, oObjHealth, Health);
+					if (Health > 50)
+					{
+						IsAlive = true;
+					}
+					else
+					{
+						IsAlive = false;
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		IsAlive = SpawnCount % 2 == 0 ? true : false;
+	}
+	*/
 	IsAlive = SpawnCount % 2 == 0 ? true : false;
 	if (Visibility && IsAlive)
 	{
@@ -108,77 +146,57 @@ void Champion::UpdateStats()
 
 		Health = Read(ADDRESS, oObjHealth, Health);
 		MaxHealth = Read(ADDRESS, oObjMaxHealth, MaxHealth);
-		HealthRegen = Read(ADDRESS, oObjHealthRegen, HealthRegen);
+		//HealthRegen = Read(ADDRESS, oObjHealthRegen, HealthRegen);
 
 		Mana = Read(ADDRESS, oObjMana, Mana);
 		MaxMana = Read(ADDRESS, oObjMaxMana, MaxMana);
-		ManaRegen = Read(ADDRESS, oObjManaRegen, ManaRegen);
+		//ManaRegen = Read(ADDRESS, oObjManaRegen, ManaRegen);
 
 		Armor = Read(ADDRESS, oObjArmor, Armor);
 		BonusArmor = Read(ADDRESS, oObjBonusArmor, BonusArmor);
-		MagicRes = Read(ADDRESS, oObjMagicRes, MagicRes);
-		BonusMagicRes = Read(ADDRESS, oObjBonusMagicRes, BonusMagicRes);
-		MoveSpeed = Read(ADDRESS, oObjMoveSpeed, MoveSpeed);
+		//MagicRes = Read(ADDRESS, oObjMagicRes, MagicRes);
+		//BonusMagicRes = Read(ADDRESS, oObjBonusMagicRes, BonusMagicRes);
+		//MoveSpeed = Read(ADDRESS, oObjMoveSpeed, MoveSpeed);
 
 		BaseAtk = Read(ADDRESS, oObjBaseAtk, BaseAtk);
 		BonusAtk = Read(ADDRESS, oObjBonusAtk, BonusAtk);
 		AtkSpeedMulti = Read(ADDRESS, oObjAtkSpeedMulti, AtkSpeedMulti);
-		Crit = Read(ADDRESS, oObjCrit, Crit);
-		CritMulti = Read(ADDRESS, oObjCritMulti, CritMulti);
+		//Crit = Read(ADDRESS, oObjCrit, Crit);
+		//CritMulti = Read(ADDRESS, oObjCritMulti, CritMulti);
 		AtkRange = Read(ADDRESS, oObjAtkRange, AtkRange);
 
-		AbilityPower = Read(ADDRESS, oObjAbilityPower, AbilityPower);
-		AdditionalApMulti = Read(ADDRESS, oObjAdditionalApMulti, AdditionalApMulti);
+		//AbilityPower = Read(ADDRESS, oObjAbilityPower, AbilityPower);
+		//AdditionalApMulti = Read(ADDRESS, oObjAdditionalApMulti, AdditionalApMulti);
 
-		MagicPen = Read(ADDRESS, oObjMagicPen, MagicPen);
-		MagicPenMulti = Read(ADDRESS, oObjMagicPenMulti, MagicPenMulti);
+		//MagicPen = Read(ADDRESS, oObjMagicPen, MagicPen);
+		//MagicPenMulti = Read(ADDRESS, oObjMagicPenMulti, MagicPenMulti);
 
-		AbilityHaste = Read(ADDRESS, oObjAbilityHaste, AbilityHaste);
-		Lethality = Read(ADDRESS, oObjLethality, Lethality);
+		//AbilityHaste = Read(ADDRESS, oObjAbilityHaste, AbilityHaste);
+		//Lethality = Read(ADDRESS, oObjLethality, Lethality);
 
 		Targetable = Read(ADDRESS, oObjTargetable, Targetable);
 		Invulnerable = Read(ADDRESS, oObjInvulnerable, Invulnerable);
 
-		Index = Read(ADDRESS, oObjIndex, Index);
+		//Index = Read(ADDRESS, oObjIndex, Index);
 		NetworkID = Read(ADDRESS, oObjNetworkID, NetworkID);
 
-		Expiry = 0;
-		IsMoving = 0;
-		Direction = 0;
-		ItemList = 0;
-		Experience = 0;
+		//Expiry = 0;
+		//IsMoving = 0;
+		//Direction = 0;
+		//ItemList = 0;
+		//Experience = 0;
 
-		SrcIndex = 0;
-		RecallState = 0;
+		//SrcIndex = 0;
+		RecallState = Read(ADDRESS, oObjRecallState, RecallState);
 
 		buffs = ReadBuffs(ADDRESS);
-
+		
 		int HoB = 0;
 		int reduction = 0;
 		UncappedAS = false;
+		
 		for (int i = 0; i < buffs.size(); i++)
 		{
-			if (buffs[i].name == "ASSETS/Perks/Styles/Precision/LethalTempo/LethalTempo.lua")
-			{
-				if (buffs[i].count == 6)
-					UncappedAS = true;
-			}
-			if (buffs[i].name == "ASSETS/Perks/Styles/Domination/HailOfBlades/HailOfBladesBuff.lua")
-			{
-				if (buffs[i].end_time > GAME_TIME)
-				{
-					UncappedAS = true;
-				}
-			}
-			else if (buffs[i].name == "ASSETS/Perks/Styles/Domination/HailOfBlades/HailOfBladesReady.lua")
-			{
-				if (buffs[i].end_time > GAME_TIME)
-				{
-					UncappedAS = true;
-					HoB = 1.1;
-
-				}
-			}
 			if (Name == "Jinx")
 			{
 				if (buffs[i].name == "jinxpassivekill")
@@ -196,7 +214,31 @@ void Champion::UpdateStats()
 					}
 				}
 			}
+
+			if (buffs[i].name == "ASSETS/Perks/Styles/Precision/LethalTempo/LethalTempo.lua")
+			{
+				if (buffs[i].count == 6)
+					UncappedAS = true;
+			}
+			else if (buffs[i].name == "ASSETS/Perks/Styles/Domination/HailOfBlades/HailOfBladesBuff.lua")
+			{
+				if (buffs[i].end_time > GAME_TIME)
+				{
+					UncappedAS = true;
+				}
+			}
+			else if (buffs[i].name == "ASSETS/Perks/Styles/Domination/HailOfBlades/HailOfBladesReady.lua")
+			{
+				if (buffs[i].end_time > GAME_TIME)
+				{
+					UncappedAS = true;
+					HoB = 1.1;
+
+				}
+			}
+			
 		}
+		
 		AtkSpeed = BaseAtkSpeed * (AtkSpeedMulti + HoB);
 		AtkSpeed = UncappedAS ? AtkSpeed : (AtkSpeed > 2.5) ? 2.5 : AtkSpeed;
 		if (reduction != 0)
@@ -204,6 +246,10 @@ void Champion::UpdateStats()
 			AtkSpeed = (AtkSpeed / 100) * (100 - reduction);
 		}
 		
+	}
+	else
+	{
+		Pos = { -1, -1, -1 };
 	}
 }
 
@@ -338,8 +384,9 @@ Champion::Champion(DWORD pointer = 0, DWORD addr = 0)
 	CHAMPION_LIST.push_back(*this);
 }
 
-
+/*
 vector<Champion> GetChampionlist()
 {
 	return CHAMPION_LIST;
 }
+*/

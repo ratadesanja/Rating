@@ -84,12 +84,12 @@ void Attack()
 			case Polymorph:
 			case Snare:
 			case SLEEP:
-			//case NearSight:
+				//case NearSight:
 			case Fear:
 			case Charm:
 			case Suppression:
 			case Blind:
-			//case Disarm:
+				//case Disarm:
 				if (CHAMPION_LIST[0].buffs[i].end_time > GAME_TIME)
 				{
 					SendKey(33);
@@ -104,41 +104,40 @@ void Attack()
 
 		COORDS target = CHAMPION_LIST[targetIndex].Pos;
 
-		int* ptr = nullptr;
-		ptr = World2Screen(target.x, target.y, target.z);
+		COORDS screenPos = World2Screen(target.x, target.y, target.z);
 
-		if (*ptr != -2147483648)
+		
+		if (screenPos.x > 0 && screenPos.x < SCREEN_WIDTH && screenPos.y > 0 && screenPos.y < SCREEN_HEIGHT)
 		{
-			COORDS screenPos = { ptr[0], ptr[1], 0 };
 			std::cout << "Closest Target: " << CHAMPION_LIST[targetIndex].Name << " - " << screenPos.x << " " << screenPos.y;
-			if (screenPos.x > 0 && screenPos.x < 1920 && screenPos.y > 0 && screenPos.y < 1080)
+			POINT p;
+			GetCursorPos(&p);
+			if (canAttackTime < GAME_TIME)
 			{
-				POINT p;
-				GetCursorPos(&p);
+				MoveMouse(screenPos.x, screenPos.y, 1, 0);
+				Sleep(10);
+
 				//FindGameTime();
-				if (canAttackTime < GAME_TIME)
-				{					
-					MoveMouse(screenPos.x, screenPos.y, 1, 0);
-					Sleep(10);
+				float atkDelay = GetAttackDelay(attackSpeed);
+				canAttackTime = GAME_TIME + atkDelay + PING;
+				canMoveTime = GAME_TIME + GetWindupTime(atkDelay, attackSpeedBase) + PING;
 
-					FindGameTime();
-					float atkDelay = GetAttackDelay(attackSpeed);
-					canAttackTime = GAME_TIME + atkDelay + PING;
-					canMoveTime = GAME_TIME + GetWindupTime(atkDelay, attackSpeedBase) + PING;
+				MoveMouse(p.x, p.y, 0, 1);
+				Sleep(15);
 
-					MoveMouse(p.x, p.y, 0, 1);
-					Sleep(15);
-					//Sleep(canMoveTime);
-					//std::cout << " Moved Mouse";
-					
-				}
-				if (canMoveTime < GAME_TIME)
-				{
-					//std::cout << std::endl << "Moving";
-					MoveMouse(0, 0, 1, 2);
-					canMoveTime = GAME_TIME + PING;
-				}
 			}
+			if (canMoveTime < GAME_TIME)
+			{
+				MoveMouse(0, 0, 1, 2);
+				canMoveTime = GAME_TIME + PING;
+			}
+		}
+		else
+		{
+			POINT p;
+			GetCursorPos(&p);
+			MoveMouse(p.x, p.y, 1, 0);
+			std::cout << "no targets";
 		}
 	}
 	else

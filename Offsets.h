@@ -1,17 +1,20 @@
 #pragma once
 
-extern const int oGameTime; // 12.9
-extern const int oObjectManager; // 12.9
-extern const int oLocalPlayer; // 12.9
-extern const int oUnderMouseObject; // 12.9
-extern const int oChat; // 12.9
+extern const int oGameTime;
+extern const int oObjectManager; 
+extern const int oAttackableUnitList;
+extern const int oLocalPlayer; 
+extern const int oUnderMouseObject;
+extern const int oChat;
 extern const int oViewMatrix;
-extern const int oViewProjMatrices; // 12.9
-extern const int oRenderer; // 12.9
-extern const int oMinimapObject; // 12.9
-extern const int oChatIsOpen;
+extern const int oViewProjMatrices;
+extern const int oRenderer;
+extern const int oMinimapObject;
 extern const int oGameClient;
+extern const int ZoomClass;
+
 extern const int oGameState;
+extern const int oChatIsOpen;
 
 extern const int oObjIndex;
 extern const int oObjTeam;

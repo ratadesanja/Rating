@@ -180,6 +180,7 @@ void FindObjectPointers(vector<UINT>& pointers)
 		currentNode = currentNode->next;
 	} while (currentNode->next != nullptr and count < 800);
 }
+
 void FindChampionPointers(vector<Champion>& ChampionList, vector<UINT>& addressSeen)
 {
 	vector<UINT> pointers;
@@ -194,17 +195,17 @@ void FindChampionPointers(vector<Champion>& ChampionList, vector<UINT>& addressS
 		float newChampionHealth = 0.0f;
 		try
 		{
-			newChampionName = ReadString(pointer, oObjName, newChampionName);
+			newChampionName = ReadString(pointer, oObjName, newChampionName, 0x0);
+			if (newChampionName[0] == 'W')
+			{
+				cout << "W";
+			}
 			if (IsChampionName(newChampionName))
 			{
-				vector<UINT> addressSeen;
-				for (int j = 0; j < CHAMPION_LIST.size(); j++)
-				{
-					addressSeen.push_back(CHAMPION_LIST[j].ADDRESS);
-				}
 				if (!IsInList(pointer, addressSeen))
 				{
 					Champion newChampion(0, pointer);
+					addressSeen.push_back(CHAMPION_LIST[CHAMPION_LIST.size() - 1].ADDRESS);
 				}
 			}
 
@@ -258,7 +259,7 @@ void GetTeamChampions()
 	cout << endl << endl << endl;
 }
 
-int width = 0; int height = 0;
+int SCREEN_WIDTH = 0; int SCREEN_HEIGHT = 0;
 float* VIEWPROJMATRIX = nullptr;
 
 void FindViewProjMatrix()
@@ -266,8 +267,8 @@ void FindViewProjMatrix()
 	UINT renderer = 0;
 	renderer = Read(LeagueBaseAddress, oRenderer, renderer);
 
-	width = Read(renderer, oRendererWidth, width);
-	height = Read(renderer, oRendererHeight, width);
+	SCREEN_WIDTH = Read(renderer, oRendererWidth, SCREEN_WIDTH);
+	SCREEN_HEIGHT = Read(renderer, oRendererHeight, SCREEN_HEIGHT);
 
 	UINT viewProjMatrices = LeagueBaseAddress + oViewProjMatrices;
 
@@ -335,7 +336,7 @@ void FindViewProjMatrix()
 
 }
 
-int* World2Screen(float x, float y, float z)
+COORDS World2Screen(float x, float y, float z)
 {
 	/*
 	if (VIEWPROJMATRIX == nullptr)
@@ -360,24 +361,24 @@ int* World2Screen(float x, float y, float z)
 	Mx = clipCoordsX / clipCoordsW;
 	My = clipCoordsY / clipCoordsW;
 
-	outX = (width / 2. * Mx) + (Mx + width / 2.);
-	outY = -(height / 2. * My) + (My + height / 2.);
+	outX = (SCREEN_WIDTH / 2. * Mx) + (Mx + SCREEN_WIDTH / 2.);
+	outY = -(SCREEN_HEIGHT / 2. * My) + (My + SCREEN_HEIGHT / 2.);
 
-	int output[2] = {0, 0};
 
-	if (0 <= outX <= width && 0 <= outY <= height)
+	COORDS output = {0, 0, 0};
+
+	if (0 <= outX <= SCREEN_WIDTH && 0 <= outY <= SCREEN_HEIGHT)
 	{
-		output[0] = outX;
-		output[1] = outY;
+		output = {(float)outX, (float)outY, 0 };
 	}
-
 	return output;
 
 }
 
+/*
 int FindClosestTarget()
 {
-	vector<Champion> champion_list = GetChampionlist();
+	vector<Champion*> champion_list = CHAMPION_LIST;
 	float closestX = 16000, closestZ = 16000;
 	float closestDistance = closestX + closestZ;
 	float radius = 0;
@@ -411,6 +412,7 @@ int FindClosestTarget()
 	return closestIndex;
 }
 
+*/
 int FindLowestTarget()
 {
 	int lowestIndex = -1;
